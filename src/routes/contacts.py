@@ -8,6 +8,8 @@ from src.database.db import get_db
 from src.schemas import ContactModel, ResponseModel
 from src.repository import contacts as repository_contact
 
+from pydantic import EmailStr
+
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
 @router.get('/', response_model=List[ResponseModel])
@@ -15,32 +17,32 @@ async def read_contacts(skip: int = 0, limit: int = 10, db: Session = Depends(ge
     contacts = await repository_contact.get_contacts(skip, limit, db)
     return contacts
 
-@router.get('/{first_name}', response_model=ResponseModel)
+@router.get('/firts_name/{first_name}', response_model=ResponseModel)
 async def get_contact_by_first_name(first_name: str, db: Session = Depends(get_db)):
     contact = await repository_contact.get_contact_by_first_name(first_name, db)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=('Contact not found'))
     return contact
 
-@router.get('/{last_name}', response_model=ResponseModel)
+@router.get('/last_name/{last_name}', response_model=ResponseModel)
 async def get_contact_by_last_name(last_name: str, db: Session = Depends(get_db)):
     contact = await repository_contact.get_contact_by_last_name(last_name, db)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=('Contact not found'))
     return contact
 
-@router.get('/{email}', response_model=ResponseModel)
-async def get_contact_by_email_name(email: str, db: Session = Depends(get_db)):
+@router.get('/email/{email}', response_model=ResponseModel)
+async def get_contact_by_email_name(email: EmailStr, db: Session = Depends(get_db)):
     contact = await repository_contact.get_contact_by_email(email, db)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=('Contact not found'))
     return contact
 
-@router.get('/upcoming_birthay', response_model=ResponseModel)
+@router.get('/upcoming_birthay', response_model=List[ResponseModel])
 async def upcoming_birthday(db: Session = Depends(get_db)):
     contact = await repository_contact.upcoming_birthday(db)
-    if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, description='Contacts not found')
+    if contact is []:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=('No contacts in this time area'))
     return contact
 
 

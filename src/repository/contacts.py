@@ -21,7 +21,7 @@ async def get_contact_by_email(contact_email: str, db: Session) -> Contact:
 async def upcoming_birthday(db: Session) -> List[Contact]:
     today = datetime.today().date()
     end_date = today + timedelta(days=7)
-    return db.query(Contact).filter(Contact.birthday <= end_date).all()
+    return db.query(Contact).filter(Contact.birthday >= today, Contact.birthday <= end_date).all()
 
 async def create_contact(body: ContactModel, db: Session) -> Contact:
     contact = Contact(

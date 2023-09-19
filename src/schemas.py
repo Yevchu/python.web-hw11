@@ -7,7 +7,7 @@ class ResponseModel(BaseModel):
     last_name: str = Field(max_length=25)
     email: EmailStr = Field(max_length=120)
     birthday: date
-    description: str | None
+    description: str | None = None
 
     class Config:
         from_attributes = True
@@ -17,7 +17,7 @@ class ContactModel(BaseModel):
     last_name: str = Field(max_length=25)
     email: EmailStr = Field(max_length=120)
     birthday: date
-    description: str | None
+    description: str | None = None
 
     class Config:
         from_attributes = True
